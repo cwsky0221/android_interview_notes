@@ -1,1 +1,76 @@
 
+1.Activity的4种启动模式
+Standard模式是Android的默认启动模式，你不在配置文件中做任何设置，那么这个Activity就是standard模式，这种模式下，Activity可以有多个实例，每次启动Activity，无论任务栈中是否已经有这个Activity的实例，系统都会创建一个新的Activity实例
+SingleTop模式和standard模式非常相似，主要区别就是当一个singleTop模式的Activity已经位于任务栈的栈顶，再去启动它时，不会再创建新的实例,如果不位于栈顶，就会创建新的实例
+SingleTask模式的Activity在同一个Task内只有一个实例，如果Activity已经位于栈顶，系统不会创建新的Activity实例，和singleTop模式一样。但Activity已经存在但不位于栈顶时，系统就会把该Activity移到栈顶，并把它上面的activity出栈
+singleInstance模式也是单例的，但和singleTask不同，singleTask只是任务栈内单例，系统里是可以有多个singleTask Activity实例的，而singleInstance Activity在整个系统里只有一个实例，启动一singleInstanceActivity时，系统会创建一个新的任务栈，并且这个任务栈只有他一个Activity
+
+2.onSaveInstanceState 和 onRestoreInstanceState
+不设置android:configChanges属性时，切换屏幕时会调用onSaveInstanceState，onRestoreInstanceState，home键时会调用onSaveInstanceState
+android:configChanges属性 设置为orientation|screenSize 时都不调用
+
+3.startActivityForResult
+Fragments使用startActivityForResult的时候，requestCode一定不要大于0xffff(65535)。
+如果希望在Fragment的onActivityResult接收数据，就要调用Fragment.startActivityForResult，而不是Fragment.getActivity().startActivityForResult。
+
+4.Fragment滑动实现方式
+viewpager 和 replace-》show hide 加上动画
+
+5.Android属性动画特性
+对比ValueAnimator类 & ObjectAnimator 类，其实二者都属于属性动画，本质上都是一致的：先改变值，然后 赋值 给对象的属性从而实现动画效果。
+但二者的区别在于：
+ValueAnimator 类是先改变值，然后 手动赋值 给对象的属性从而实现动画；是 间接 对对象属性进行操作；
+ValueAnimator 类本质上是一种  改变 值 的操作机制
+ObjectAnimator类是先改变值，然后 自动赋值 给对象的属性从而实现动画；是 直接 对对象属性进行操作；
+
+6.插值器 估值器
+插值器（Interpolator）设置 属性值 从初始值过渡到结束值 的变化规律，实现非线性运动的动画效果 非线性运动：动画改变的速率不是一成不变的，如加速 & 减速运动都属于非线性运动
+估值器（TypeEvaluator）设置 属性值 从初始值过渡到结束值 的变化具体数值，协助插值器 实现非线性运动的动画效果 插值器（Interpolator）决定 值 的变化规律（匀速、加速blabla），即决定的是变化趋势；而接下来的具体变化数值则交给
+而估值器
+
+7.activity,windows,view 不同
+在Activity中调用attach，创建了一个Window
+创建的window是其子类PhoneWindow，在attach中创建PhoneWindow
+在Activity中调用setContentView(R.layout.xxx)
+其中实际上是调用的getWindow().setContentView()
+调用PhoneWindow中的setContentView方法
+创建ParentView： 作为ViewGroup的子类，实际是创建的DecorView(作为FramLayout的子类）
+将指定的R.layout.xxx进行填充 通过布局填充器进行填充【其中的parent指的就是DecorView】
+调用到ViewGroup
+调用ViewGroup的removeAllView()，先将所有的view移除掉
+添加新的view：addView()
+
+8.自定义View 优化：
+ondraw中不要new ， 通用性，易用性（设置图片需要支持字符，或者/drawable/xxxid）,资源回收
+
+9.低版本SDK如何实现高版本api
+api是否是存在supports包里的，存在即用；否则：
+用 @TargeApi($API_LEVEL) 使可以编译通过, 不建议使用 @SuppressLint("NewApi");
+运行时判断 API level; 仅在足够高，有此方法的 API level 系统中，调用此方法;
+保证功能完整性，保证低API版本通过其他方法提供功能实现。
+
+10.OKHttp ，HttpURLConnection，HttpClient
+
+11.Bitmap对象的理解
+Bitmap是Android中处理图片的一个重要的类。用它可以获取图片信息，进行图片剪切、平移、旋转、缩放等操作，并可以指定格式保存图片文件。
+Bitmap对象的获取：获取Bitmap主要依靠BitmapFactory类
+编辑图片属性BitmapFactory.Options：
+inJustDecodeBounds：设置inJustDecodeBounds为true后，调用decodeFile方法时，并不真正分配创建Bitmap所需的空间，适用于仅仅只需要获取一些属性——比如原始图片的长度和宽度等的情况，比如在压缩图片时，需要计算属性inSampleSize的值，就需要获取原始图片的长度和宽度
+inSampleSize：缩放图片采用的比率值，设置之后， 将以2的指数的倒数倍对原始图片进行缩放。
+outHeight、outWidth：图像的高度和宽度
+inPreferredConfig：设置图片的色彩模式，可选值为Android.graphics.Bitmap的一个内部类Bitmap.Config的枚举值：常用ALPHA_8、RGB_565和ARGB_8888，默认是ARGB_8888，其中，A代表透明度，R代表红色，G代表绿色，B代表蓝色
+图片操作:利用Matrix来缩放，平移，剪切
+
+
+
+
+
+
+
+
+
+
+
+
+
+
